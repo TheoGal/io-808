@@ -15,12 +15,6 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
-      DEPLOY_PORT: ${{ secrets.DEPLOY_PORT }}
-      DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
-      DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
-      DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
     steps:
       - uses: actions/checkout@v4
 
@@ -51,15 +45,3 @@ jobs:
             --notes "Built automatically from ${GITHUB_SHA::7}. Unzip in the site root to get the io808/ folder." \
             --target "$GITHUB_SHA"
 
-      # Optional: only runs once the DEPLOY_* secrets are set in the repo settings
-      - name: Deploy to server
-        if: env.DEPLOY_HOST != ''
-        run: |
-          PORT="${DEPLOY_PORT:-22}"
-          mkdir -p ~/.ssh
-          printf '%s\n' "$DEPLOY_KEY" > ~/.ssh/deploy_key
-          chmod 600 ~/.ssh/deploy_key
-          ssh-keyscan -p "$PORT" "$DEPLOY_HOST" >> ~/.ssh/known_hosts 2>/dev/null
-          rsync -az --delete \
-            -e "ssh -i ~/.ssh/deploy_key -p $PORT" \
-            out/ "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/"
