@@ -52,6 +52,23 @@ const TOP_RIGHT_WIDTH = APP_WIDTH - TOP_LEFT_WIDTH;
 
 const TOP_HORIZONTAL_SEPERATOR_HEIGHT = TOP_HEIGHT - 10;
 
+// Scale the whole machine down to fit the browser window (never above 1x)
+const FULL_WIDTH = APP_WIDTH + APP_PADDING;
+const FULL_HEIGHT = APP_HEIGHT + HEADER_HEIGHT + FOOTER_HEIGHT + APP_PADDING;
+
+const getFitScale = () =>
+  Math.min(1, window.innerWidth / FULL_WIDTH, window.innerHeight / FULL_HEIGHT);
+
+const useFitScale = () => {
+  const [scale, setScale] = React.useState(getFitScale);
+  React.useEffect(() => {
+    const onResize = () => setScale(getFitScale());
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+  return scale;
+};
+
 const styles = stylex.create({
   pageWrapper: {
     position: "relative",
@@ -186,9 +203,19 @@ const styles = stylex.create({
 
 const AppLayout = React.memo(
   () => {
+    const scale = useFitScale();
     return (
-      <div {...stylex.props(styles.pageWrapper)}>
-        <div {...stylex.props(styles.wrapper)}>
+      <div
+        {...stylex.props(styles.pageWrapper)}
+        style={{
+          minWidth: FULL_WIDTH * scale,
+          minHeight: FULL_HEIGHT * scale
+        }}
+      >
+        <div
+          {...stylex.props(styles.wrapper)}
+          style={{ transform: `scale(${scale})`, transformOrigin: "center" }}
+        >
           <div {...stylex.props(styles.headerWrapper)}>
             <div {...stylex.props(styles.saveLoadClearWrapper)}>
               <ConnectedLoadButton
