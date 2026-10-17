@@ -224,7 +224,7 @@ const AppLayout = React.memo(
                   themeStyles.labelGreyLarge,
                   themeStyles.autoCursor
                 )}
-                href="/tutorial"
+                href="tutorial.html"
                 target="_blank"
                 rel="noopener noreferrer"
               >
