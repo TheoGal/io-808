@@ -19,27 +19,47 @@ import {
   ConnectedResetButton
 } from "./connectedComponents";
 
-const GithubLink = () => {
-  return (
-    <a
-      {...stylex.props(styles.githubLink)}
-      href="https://github.com/vincentriemer/io-808"
-      target="_blank"
-      rel="noopener noreferrer"
-      title="Github Repo"
-    >
-      <Octicon name="mark-github" mega />
-    </a>
-  );
-};
+const HelpLink = () => (
+  <a
+    {...stylex.props(styles.sideButton, styles.sideLink)}
+    href="tutorial.html"
+    target="_blank"
+    rel="noopener noreferrer"
+    title="Tutorial"
+  >
+    <Octicon
+      {...stylex.props(styles.sideIcon)}
+      name="question"
+      mega
+    />
+  </a>
+);
+
+const GithubLink = () => (
+  <a
+    {...stylex.props(styles.sideButton, styles.sideLink)}
+    href="https://github.com/TheoGal/io-808"
+    target="_blank"
+    rel="noopener noreferrer"
+    title="GitHub repo - based on iO-808 by Vincent Riemer"
+  >
+    <Octicon
+      {...stylex.props(styles.sideIcon)}
+      name="mark-github"
+      mega
+    />
+  </a>
+);
 
 // layout constants
 const APP_WIDTH = 1400;
 const APP_HEIGHT = 800;
 const APP_PADDING = 40;
 
-const HEADER_HEIGHT = 50;
-const FOOTER_HEIGHT = 30;
+// Vertical button column to the left of the machine
+const SIDEBAR_WIDTH = 50;
+const SIDEBAR_GAP = 15;
+const SIDE_BUTTON_HEIGHT = 35;
 
 const TOP_BOTTOM_DIVIDER_HEIGHT = 3;
 const TOP_HEIGHT = Math.ceil(APP_HEIGHT * 0.64) - TOP_BOTTOM_DIVIDER_HEIGHT * 2;
@@ -53,8 +73,9 @@ const TOP_RIGHT_WIDTH = APP_WIDTH - TOP_LEFT_WIDTH;
 const TOP_HORIZONTAL_SEPERATOR_HEIGHT = TOP_HEIGHT - 10;
 
 // Scale the whole machine down to fit the browser window (never above 1x)
-const FULL_WIDTH = APP_WIDTH + APP_PADDING;
-const FULL_HEIGHT = APP_HEIGHT + HEADER_HEIGHT + FOOTER_HEIGHT + APP_PADDING;
+const WRAPPER_WIDTH = SIDEBAR_WIDTH + SIDEBAR_GAP + APP_WIDTH;
+const FULL_WIDTH = WRAPPER_WIDTH + APP_PADDING;
+const FULL_HEIGHT = APP_HEIGHT + APP_PADDING;
 
 const getFitScale = () =>
   Math.min(1, window.innerWidth / FULL_WIDTH, window.innerHeight / FULL_HEIGHT);
@@ -74,58 +95,66 @@ const styles = stylex.create({
     position: "relative",
     width: "100%",
     height: "100%",
-    minWidth: APP_WIDTH + APP_PADDING,
-    minHeight: APP_HEIGHT + HEADER_HEIGHT + FOOTER_HEIGHT + APP_PADDING
+    minWidth: FULL_WIDTH,
+    minHeight: FULL_HEIGHT
   },
 
   wrapper: {
     position: "absolute",
-    width: APP_WIDTH,
-    height: APP_HEIGHT + HEADER_HEIGHT + FOOTER_HEIGHT,
+    width: WRAPPER_WIDTH,
+    height: APP_HEIGHT,
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
     margin: "auto",
     display: "flex",
-    flexDirection: "column",
-    alignItems: "center"
-  },
-
-  headerWrapper: {
-    width: APP_WIDTH,
-    height: HEADER_HEIGHT,
-    display: "flex",
     flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between"
+    alignItems: "flex-start",
+    gap: SIDEBAR_GAP
   },
 
-  saveLoadClearWrapper: {
+  sidebar: {
+    width: SIDEBAR_WIDTH,
     display: "flex",
-    flexDirection: "row"
+    flexDirection: "column",
+    alignItems: "stretch",
+    gap: 10,
+    paddingTop: TOP_BOTTOM_DIVIDER_HEIGHT
   },
-  headerButton: {
-    width: 35,
-    height: 35
+  sideButton: {
+    width: SIDEBAR_WIDTH,
+    height: SIDE_BUTTON_HEIGHT,
+    marginLeft: 0,
+    marginRight: 0,
+    borderRadius: 4,
+    backgroundColor: tokens.buttonColor,
+    color: tokens.darkGrey,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center"
   },
-  headerButtonIcon: {
-    width: 35,
-    height: 35
+  sideLink: {
+    boxShadow: tokens.buttonShadow,
+    cursor: "pointer",
+    textDecoration: "none",
+    transition: "transform cubic-bezier(0.4, 0.0, 0.2, 1) .1s",
+    transform: "scale(1.0)",
+    ":hover": {
+      boxShadow: tokens.buttonHoverShadow,
+      transform: "scale(1.04)"
+    }
+  },
+  sideIcon: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    color: tokens.darkGrey,
+    transform: "scale(0.8)"
   },
   resetButton: {
-    height: 35
-  },
-
-  footerWrapper: {
-    width: APP_WIDTH,
-    height: FOOTER_HEIGHT,
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingLeft: 10,
-    paddingRight: 10
+    paddingLeft: 0,
+    paddingRight: 0
   },
 
   appWrapper: {
@@ -173,31 +202,6 @@ const styles = stylex.create({
   bottomSection: {
     width: APP_WIDTH,
     height: BOTTOM_HEIGHT
-  },
-
-  blmLink: {
-    position: "relative",
-    color: tokens.white,
-    fontSize: 24,
-    fontWeight: "bold",
-    textDecoration: "underline",
-    backgroundColor: tokens.black,
-    padding: "10px 15px",
-    top: -10
-  },
-
-  githubLink: {
-    color: tokens.slightlyDarkerBlack,
-    cursor: "pointer",
-    opacity: 0.75,
-    transition: "opacity 0.2s",
-    ":hover": {
-      opacity: 1
-    }
-  },
-
-  authorLink: {
-    color: tokens.grey
   }
 });
 
@@ -216,18 +220,19 @@ const AppLayout = React.memo(
           {...stylex.props(styles.wrapper)}
           style={{ transform: `scale(${scale})`, transformOrigin: "center" }}
         >
-          <div {...stylex.props(styles.headerWrapper)}>
-            <div {...stylex.props(styles.saveLoadClearWrapper)}>
-              <ConnectedLoadButton
-                xstyle={styles.headerButton}
-                iconXstyle={styles.headerButtonIcon}
-              />
-              <ConnectedSaveButton
-                xstyle={styles.headerButton}
-                iconXstyle={styles.headerButtonIcon}
-              />
-              <ConnectedResetButton xstyle={styles.resetButton} />
-            </div>
+          <div {...stylex.props(styles.sidebar)}>
+            <ConnectedLoadButton
+              xstyle={styles.sideButton}
+              iconXstyle={styles.sideIcon}
+            />
+            <ConnectedSaveButton
+              xstyle={styles.sideButton}
+              iconXstyle={styles.sideIcon}
+            />
+            <ConnectedResetButton
+              xstyle={[styles.sideButton, styles.resetButton]}
+            />
+            <HelpLink />
             <GithubLink />
           </div>
           <div {...stylex.props(styles.appWrapper)}>
@@ -241,52 +246,6 @@ const AppLayout = React.memo(
             <div {...stylex.props(styles.topBottomDivider)} />
             <div {...stylex.props(styles.bottomWrapper)}>
               <BottomSection xstyle={styles.bottomSection} />
-            </div>
-          </div>
-          <div {...stylex.props(styles.footerWrapper)}>
-            <div>
-              <a
-                {...stylex.props(
-                  themeStyles.labelBase,
-                  themeStyles.labelGreyLarge,
-                  themeStyles.autoCursor
-                )}
-                href="tutorial.html"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Tutorial
-              </a>
-            </div>
-            <div
-              {...stylex.props(
-                themeStyles.labelBase,
-                themeStyles.labelGreyLarge
-              )}
-            >
-              Made with <Octicon name="heart" /> by{" "}
-              <a
-                {...stylex.props(styles.authorLink)}
-                href="http://vincentriemer.com"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Vincent Riemer
-              </a>
-            </div>
-            <div>
-              <a
-                {...stylex.props(
-                  themeStyles.labelBase,
-                  themeStyles.labelGreyLarge,
-                  themeStyles.autoCursor
-                )}
-                href="https://github.com/vincentriemer/io-808/issues"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Report an Issue
-              </a>
             </div>
           </div>
         </div>
