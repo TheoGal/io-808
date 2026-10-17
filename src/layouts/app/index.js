@@ -73,7 +73,9 @@ const TOP_RIGHT_WIDTH = APP_WIDTH - TOP_LEFT_WIDTH;
 const TOP_HORIZONTAL_SEPERATOR_HEIGHT = TOP_HEIGHT - 10;
 
 // Scale the whole machine down to fit the browser window (never above 1x)
-const WRAPPER_WIDTH = SIDEBAR_WIDTH + SIDEBAR_GAP + APP_WIDTH;
+// The sidebar's width is mirrored on the right so the machine itself stays centered
+const SIDE_SPACE = SIDEBAR_WIDTH + SIDEBAR_GAP;
+const WRAPPER_WIDTH = SIDE_SPACE + APP_WIDTH + SIDE_SPACE;
 const FULL_WIDTH = WRAPPER_WIDTH + APP_PADDING;
 const FULL_HEIGHT = APP_HEIGHT + APP_PADDING;
 
@@ -103,15 +105,16 @@ const styles = stylex.create({
     position: "absolute",
     width: WRAPPER_WIDTH,
     height: APP_HEIGHT,
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    margin: "auto",
+    // Center by midpoint so it stays centered even when wider than the window
+    top: "50%",
+    left: "50%",
+    marginLeft: -WRAPPER_WIDTH / 2,
+    marginTop: -APP_HEIGHT / 2,
     display: "flex",
     flexDirection: "row",
     alignItems: "flex-start",
-    gap: SIDEBAR_GAP
+    gap: SIDEBAR_GAP,
+    paddingRight: SIDE_SPACE
   },
 
   sidebar: {
