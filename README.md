@@ -2,6 +2,8 @@
 
 A web-based TR-808 drum machine that runs entirely in the browser using the Web Audio API.
 
+**Try it:** [theogal.github.io/io-808](https://theogal.github.io/io-808/)
+
 This is a fork of [iO-808 by Vincent Riemer](https://github.com/vincentriemer/io-808), which did all the hard work of recreating the 808's sounds and interface. This fork focuses on making it easy to self-host and on a few UI tweaks.
 
 ## Changes in this fork
@@ -10,7 +12,7 @@ This is a fork of [iO-808 by Vincent Riemer](https://github.com/vincentriemer/io
 - **Fits the browser window.** The machine scales itself to fit the window, so no scrollbars and no need for browser zoom on smaller or OS-scaled screens.
 - **Button column on the left.** Load, save and reset moved into a vertical column next to the machine, together with a help button (opens the tutorial) and a link to this repo. The machine stays centered in the window.
 - **No header or footer rows.** More room for the machine itself.
-- **Automatic builds.** Every push to `master` is built by GitHub Actions and published as a ready-to-serve zip.
+- **Automatic builds.** Every push to `master` is built by GitHub Actions, published as a ready-to-serve zip and deployed to GitHub Pages.
 
 ## Self-hosting
 
